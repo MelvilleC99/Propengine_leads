@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PropEngine Insights Dashboard
+
+A modern, responsive dashboard built with Next.js 15, TypeScript, Tailwind CSS, and shadcn/ui components for managing property leads and analytics.
+
+## Features
+
+- **Modern Dashboard Layout**: Clean, professional interface with sidebar navigation
+- **Lead Management**: Track and manage property leads with status updates
+- **Analytics & Insights**: Comprehensive analytics with performance metrics
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+- **Component Library**: Built with shadcn/ui for consistent, accessible components
+- **TypeScript**: Full type safety throughout the application
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Components**: shadcn/ui (Radix UI primitives)
+- **Icons**: Lucide React
+- **Font**: Geist Sans & Mono
 
 ## Getting Started
 
-First, run the development server:
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+2. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+3. **Open your browser** and navigate to [http://localhost:3000](http://localhost:3000)
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── analytics/         # Analytics page
+│   ├── leads/             # Leads management page
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Dashboard home page
+├── components/            # Reusable components
+│   ├── ui/                # shadcn/ui components
+│   ├── dashboard-cards.tsx    # Dashboard stat cards
+│   ├── dashboard-header.tsx   # Top navigation header
+│   ├── dashboard-layout.tsx   # Main layout wrapper
+│   └── dashboard-sidebar.tsx  # Sidebar navigation
+└── lib/                   # Utility functions
+    └── utils.ts           # Helper utilities
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Available Pages
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Dashboard** (`/`) - Overview with key metrics and recent activity
+- **Leads** (`/leads`) - Lead management and tracking
+- **Analytics** (`/analytics`) - Performance metrics and insights
+- **Reports** (`/reports`) - Report generation (placeholder)
+- **Calendar** (`/calendar`) - Calendar view (placeholder)
+- **Settings** (`/settings`) - Application settings (placeholder)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Components
 
-## Learn More
+The dashboard includes several key components:
 
-To learn more about Next.js, take a look at the following resources:
+- **StatsCards**: Key performance indicators with trend indicators
+- **RecentLeadsCard**: Latest lead activity
+- **QuickActionsCard**: Common actions for quick access
+- **DashboardSidebar**: Navigation with active state management
+- **DashboardHeader**: Search, notifications, and user menu
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Customization
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Adding New Pages
 
-## Deploy on Vercel
+1. Create a new folder in `src/app/`
+2. Add a `page.tsx` file
+3. Use the `DashboardLayout` component to maintain consistency
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Adding New Components
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Create components in `src/components/`
+2. Use shadcn/ui components as building blocks
+3. Follow the existing naming conventions
+
+### Styling
+
+- Uses Tailwind CSS for styling
+- Custom CSS variables defined in `globals.css`
+- Consistent color scheme with shadcn/ui theme
+
+## Development
+
+- **Linting**: `npm run lint`
+- **Build**: `npm run build`
+- **Start**: `npm start` (production)
+
+## Next Steps
+
+- Add data persistence (database integration)
+- Implement user authentication
+- Add chart visualizations (Chart.js, Recharts)
+- Add real-time updates
+- Implement lead form submissions
+- Add email integration
+- Add calendar scheduling
+- Add report generation
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+This project is private and proprietary to PropEngine.
