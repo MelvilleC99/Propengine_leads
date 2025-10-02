@@ -14,7 +14,7 @@ export async function loadSalesData(): Promise<SalesRecord[]> {
       skipEmptyLines: true,
       complete: (results) => {
         // Convert string 'False'/'True' to boolean
-        const data = results.data.map((row: any) => ({
+        const data = results.data.map((row: Record<string, unknown>) => ({
           ...row,
           data_error: row.data_error === 'True' || row.data_error === true,
           has_lead_source: row.has_lead_source === 'True' || row.has_lead_source === true,

@@ -1,6 +1,5 @@
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { 
   Select,
   SelectContent,
@@ -14,7 +13,6 @@ import {
   Users, 
   DollarSign, 
   Target,
-  Building2,
   Calendar,
   BarChart3
 } from "lucide-react";

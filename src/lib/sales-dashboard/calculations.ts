@@ -144,7 +144,7 @@ export function calculateMonthlyRevenue(
   });
   
   // Sort by monthKey (yyyy-MM format) to get chronological order
-  return _.sortBy(monthlyData, 'monthKey').map(({ monthKey, ...rest }) => rest);
+  return _.sortBy(monthlyData, 'monthKey').map(({ monthKey: _, ...rest }) => rest);
 }
 
 /**

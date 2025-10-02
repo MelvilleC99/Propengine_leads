@@ -16,7 +16,7 @@ import {
   filterByDateRange,
 } from "@/lib/sales-dashboard/calculations";
 import type { SalesRecord, LeadRecord } from "@/types/data";
-import { subMonths, subYears, startOfYear } from "date-fns";
+import { subMonths, startOfYear } from "date-fns";
 
 export default function SalesDashboard() {
   const [salesData, setSalesData] = useState<SalesRecord[]>([]);
@@ -68,7 +68,7 @@ export default function SalesDashboard() {
 
     // Filter by date range
     let startDate: Date | null = null;
-    let endDate: Date | null = null;
+    const endDate: Date | null = null;
     const now = new Date();
 
     switch (dateRange) {
