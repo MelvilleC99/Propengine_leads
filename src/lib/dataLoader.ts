@@ -14,11 +14,11 @@ export async function loadSalesData(): Promise<SalesRecord[]> {
       skipEmptyLines: true,
       complete: (results) => {
         // Convert string 'False'/'True' to boolean
-        const data = results.data.map((row: Record<string, unknown>) => ({
-          ...row,
-          data_error: row.data_error === 'True' || row.data_error === true,
-          has_lead_source: row.has_lead_source === 'True' || row.has_lead_source === true,
-          has_web_reference: row.has_web_reference === 'True' || row.has_web_reference === true,
+        const data = results.data.map((row: unknown) => ({
+          ...(row as Record<string, unknown>),
+          data_error: (row as Record<string, unknown>).data_error === 'True' || (row as Record<string, unknown>).data_error === true,
+          has_lead_source: (row as Record<string, unknown>).has_lead_source === 'True' || (row as Record<string, unknown>).has_lead_source === true,
+          has_web_reference: (row as Record<string, unknown>).has_web_reference === 'True' || (row as Record<string, unknown>).has_web_reference === true,
         })) as SalesRecord[];
         
         resolve(data);
