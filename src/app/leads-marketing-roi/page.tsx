@@ -2,51 +2,50 @@
 
 import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/dashboard-layout";
-import { Filters } from "@/components/sales-dashboard/filters";
-import { MetricsCards } from "@/components/sales-dashboard/metrics-cards";
-import { LeadSourceCards } from "@/components/sales-dashboard/lead-source-cards";
-import { RevenueChart } from "@/components/sales-dashboard/revenue-chart";
+import { Filters } from "@/components/leads-marketing-roi/filters";
+import { OverviewCards } from "@/components/leads-marketing-roi/overview-cards";
+import { RankingCards } from "@/components/leads-marketing-roi/ranking-cards";
 import { loadSalesData, loadLeadsData } from "@/lib/dataLoader";
+import { loadAgencySpend } from "@/lib/leads-marketing-roi/dataLoader";
 import {
-  calculateOverviewMetrics,
-  calculateLeadSourceBreakdown,
-  calculateMonthlyRevenue,
+  calculateOverallROI,
+  calculateAgencyROI,
   getUniqueAgencies,
-  filterByAgencies,
   filterByDateRange,
-  filterLeadsByDateRange,
-} from "@/lib/sales-dashboard/calculations";
+} from "@/lib/leads-marketing-roi/calculations";
 import type { SalesRecord, LeadRecord } from "@/types/data";
-import { subMonths, startOfYear, parseISO } from "date-fns";
+import type { AgencySpend } from "@/lib/leads-marketing-roi/calculations";
+import { startOfYear, subMonths } from "date-fns";
 
-export default function SalesDashboard() {
+export default function LeadsMarketingROIDashboard() {
   const [salesData, setSalesData] = useState<SalesRecord[]>([]);
   const [leadsData, setLeadsData] = useState<LeadRecord[]>([]);
+  const [agencySpends, setAgencySpends] = useState<AgencySpend[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Filter states
   const [agencies, setAgencies] = useState<string[]>([]);
-  const [selectedAgencies, setSelectedAgencies] = useState<string[]>([]);
+  const [selectedAgency, setSelectedAgency] = useState("all");
   const [dateRange, setDateRange] = useState("all");
-  const [customStartDate, setCustomStartDate] = useState("");
-  const [customEndDate, setCustomEndDate] = useState("");
 
   // Load data on mount
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [sales, leads] = await Promise.all([
+        const [sales, leads, spends] = await Promise.all([
           loadSalesData(),
           loadLeadsData(),
+          loadAgencySpend(),
         ]);
         
         setSalesData(sales);
         setLeadsData(leads);
+        setAgencySpends(spends);
         
-        // Extract unique agencies
-        const uniqueAgencies = getUniqueAgencies(sales);
+        // Extract unique agencies from spend data
+        const uniqueAgencies = getUniqueAgencies(spends);
         setAgencies(uniqueAgencies);
         
         setLoading(false);
@@ -62,54 +61,66 @@ export default function SalesDashboard() {
 
   // Apply filters
   const filteredData = () => {
-    let filtered = salesData;
-    let filteredLeads = leadsData;
-
-    // Filter by agencies
-    if (selectedAgencies.length > 0) {
-      filtered = filterByAgencies(filtered, selectedAgencies);
-    }
-
-    // Filter by date range
+    // Filter by date range - consistent with sales dashboard
     let startDate: Date | null = null;
     let endDate: Date | null = null;
     const now = new Date();
+    
+    // Always exclude October
+    const maxDate = new Date(2025, 8, 30); // Sep 30, 2025
 
     switch (dateRange) {
       case "ytd":
-        startDate = startOfYear(now);
+        startDate = startOfYear(new Date(2025, 0, 1));
+        endDate = maxDate;
         break;
       case "6months":
-        startDate = subMonths(now, 6);
+        // Last 6 complete months: Apr-Sep
+        startDate = new Date(2025, 3, 1); // April 1
+        endDate = maxDate;
         break;
       case "3months":
-        startDate = subMonths(now, 3);
+        // Last 3 complete months: Jul-Sep
+        startDate = new Date(2025, 6, 1); // July 1
+        endDate = maxDate;
         break;
       case "1month":
-        startDate = subMonths(now, 1);
-        break;
-      case "custom":
-        if (customStartDate) startDate = parseISO(customStartDate);
-        if (customEndDate) endDate = parseISO(customEndDate);
+        // Last complete month: September only
+        startDate = new Date(2025, 8, 1); // Sep 1
+        endDate = maxDate; // Sep 30
         break;
       default:
+        // "all" - Jan 1 to Sep 30, 2025
+        startDate = new Date(2025, 0, 1);
+        endDate = maxDate;
         break;
     }
 
-    if (startDate || endDate) {
-      filtered = filterByDateRange(filtered, startDate, endDate);
-      filteredLeads = filterLeadsByDateRange(filteredLeads, startDate, endDate);
-    }
+    const filteredSales = filterByDateRange(salesData, startDate, endDate);
+    const filteredLeads = filterByDateRange(leadsData, startDate, endDate);
 
-    return { sales: filtered, leads: filteredLeads };
+    return { sales: filteredSales, leads: filteredLeads, startDate, endDate };
   };
 
   const currentData = filteredData();
 
-  // Calculate metrics
-  const metrics = calculateOverviewMetrics(currentData.sales, currentData.leads);
-  const leadSourceBreakdown = calculateLeadSourceBreakdown(currentData.sales);
-  const monthlyRevenue = calculateMonthlyRevenue(currentData.sales);
+  // Calculate metrics with date range for proper month calculation
+  const overallMetrics = calculateOverallROI(
+    currentData.leads,
+    currentData.sales,
+    agencySpends,
+    selectedAgency,
+    currentData.startDate,
+    currentData.endDate
+  );
+
+  const agencyMetrics = calculateAgencyROI(
+    currentData.leads,
+    currentData.sales,
+    agencySpends,
+    currentData.startDate,
+    currentData.endDate
+  );
 
   if (loading) {
     return (
@@ -146,39 +157,29 @@ export default function SalesDashboard() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sales & Leads Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Lead Spend & ROI</h1>
           <p className="text-gray-600">
-            Overview of sales performance and lead metrics
+            Marketing spend efficiency and lead performance analysis (Jan-Sep 2025)
           </p>
         </div>
 
         {/* Filters */}
         <Filters
           agencies={agencies}
-          selectedAgencies={selectedAgencies}
-          onAgenciesChange={setSelectedAgencies}
+          selectedAgency={selectedAgency}
+          onAgencyChange={setSelectedAgency}
           dateRange={dateRange}
           onDateRangeChange={setDateRange}
-          customStartDate={customStartDate}
-          customEndDate={customEndDate}
-          onCustomDateChange={(start, end) => {
-            setCustomStartDate(start);
-            setCustomEndDate(end);
-          }}
         />
 
-        {/* Metrics Cards */}
-        <MetricsCards metrics={metrics} />
+        {/* Overview Cards */}
+        <OverviewCards 
+          p24Metrics={overallMetrics.p24} 
+          ppMetrics={overallMetrics.pp}
+        />
 
-        {/* Lead Source Cards */}
-        {leadSourceBreakdown.length > 0 && (
-          <LeadSourceCards breakdown={leadSourceBreakdown} />
-        )}
-
-        {/* Revenue Chart */}
-        {monthlyRevenue.length > 0 && (
-          <RevenueChart data={monthlyRevenue} />
-        )}
+        {/* Rankings */}
+        <RankingCards agencyMetrics={agencyMetrics} />
       </div>
     </DashboardLayout>
   );

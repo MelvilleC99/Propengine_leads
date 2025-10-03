@@ -7,6 +7,7 @@ import Image from "next/image";
 import {
   TrendingUp,
   Users,
+  PieChart,
 } from "lucide-react";
 
 const navigation = [
@@ -19,6 +20,11 @@ const navigation = [
     name: "Leads Analysis",
     href: "/leads",
     icon: Users,
+  },
+  {
+    name: "Lead Spend & ROI",
+    href: "/leads-marketing-roi",
+    icon: PieChart,
   },
 ];
 

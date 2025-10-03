@@ -1,6 +1,6 @@
 // Sales dashboard specific calculations
 import _ from 'lodash';
-import { format, parseISO, startOfMonth } from 'date-fns';
+import { format, parseISO, startOfMonth, parse } from 'date-fns';
 import type { 
   SalesRecord, 
   LeadRecord, 
@@ -8,6 +8,32 @@ import type {
   LeadSourceBreakdown,
   MonthlyRevenue 
 } from '@/types/data';
+
+/**
+ * Parse lead date from format "18 Sept 2025, 03:24:24" to Date object
+ */
+function parseLeadDate(dateString: string): Date {
+  // Format: "18 Sept 2025, 03:24:24"
+  return parse(dateString, 'dd MMM yyyy, HH:mm:ss', new Date());
+}
+
+/**
+ * Filter leads data by date range
+ */
+export function filterLeadsByDateRange(
+  data: LeadRecord[],
+  startDate: Date | null,
+  endDate: Date | null
+): LeadRecord[] {
+  if (!startDate && !endDate) return data;
+  
+  return data.filter(lead => {
+    const leadDate = parseLeadDate(lead['Date (SAST)']);
+    if (startDate && leadDate < startDate) return false;
+    if (endDate && leadDate > endDate) return false;
+    return true;
+  });
+}
 
 /**
  * Filter sales data by selected agencies
@@ -45,7 +71,7 @@ export function calculateOverviewMetrics(
   salesData: SalesRecord[],
   leadsData: LeadRecord[]
 ): OverviewMetrics {
-  // Total leads - ALL sales leads from raw data
+  // Filter for sales leads only (exclude rentals)
   const salesLeads = leadsData.filter(l => l.lead_type === 'Sales');
   const totalLeads = salesLeads.length;
   
