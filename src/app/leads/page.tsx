@@ -47,7 +47,7 @@ export default function LeadsPage() {
           complete: (results) => {
             setRawLeads(results.data);
           },
-          error: (error) => {
+          error: (error: Error) => {
             console.error("Error parsing leads CSV:", error);
           }
         });
@@ -64,7 +64,7 @@ export default function LeadsPage() {
             setOtherAgenciesData(results.data);
             setLoading(false);
           },
-          error: (error) => {
+          error: (error: Error) => {
             console.error("Error parsing other agencies CSV:", error);
             setLoading(false);
           }
