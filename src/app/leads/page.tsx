@@ -81,7 +81,7 @@ export default function LeadsPage() {
   // Apply date filter
   const getFilteredLeads = () => {
     let startDate: Date | null = null;
-    let endDate: Date | null = null;
+    const endDate: Date | null = null;
     const now = new Date();
 
     switch (dateFilter) {

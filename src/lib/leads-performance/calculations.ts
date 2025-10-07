@@ -130,7 +130,13 @@ export function aggregatePEAgencies(leads: LeadRecord[]): AgencyData[] {
 /**
  * Aggregate competitor agencies
  */
-export function aggregateCompetitorAgencies(leads: LeadRecord[]): any[] {
+export function aggregateCompetitorAgencies(leads: LeadRecord[]): Array<{
+  org_name: string;
+  agency: string;
+  leads: number;
+  leads_responded: number;
+  response_rate: number;
+}> {
   const agencyMap = new Map<string, { leads: number; responded: number }>();
   
   leads.forEach(lead => {
