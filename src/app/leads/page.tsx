@@ -5,22 +5,19 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, Users, Building2, Calendar, Target } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-interface AgentData {
-  agent_name: string;
-  agent_notified: number;
-  agent_responded: number;
-  grand_total: number;
-  response_rate?: number;
-}
-
-interface RealNetAgency {
-  agency: string;
-  agent_notified: number;
-  agent_responded: number;
-  grand_total: number;
-  response_rate: number;
-}
+import { subMonths, startOfYear } from 'date-fns';
+import Papa from 'papaparse';
+import {
+  type LeadRecord,
+  type AgentData,
+  type AgencyData,
+  type LeadSource,
+  filterLeadsByDateRange,
+  aggregateByAgent,
+  aggregatePEAgencies,
+  aggregateCompetitorAgencies,
+  calculateLeadSources,
+} from '@/lib/leads-performance/calculations';
 
 interface OtherAgency {
   org_name: string;
@@ -30,105 +27,48 @@ interface OtherAgency {
   response_rate: number;
 }
 
-interface LeadSource {
-  source: string;
-  count: number;
-  percentage: number;
-}
-
 export default function LeadsPage() {
-  const [agentData, setAgentData] = useState<AgentData[]>([]);
-  const [realNetAgencies, setRealNetAgencies] = useState<RealNetAgency[]>([]);
-  const [otherAgencies, setOtherAgencies] = useState<OtherAgency[]>([]);
-  const [leadSources, setLeadSources] = useState<LeadSource[]>([]);
+  const [rawLeads, setRawLeads] = useState<LeadRecord[]>([]);
+  const [otherAgenciesData, setOtherAgenciesData] = useState<OtherAgency[]>([]);
   const [loading, setLoading] = useState(true);
   const [dateFilter, setDateFilter] = useState("all");
 
   useEffect(() => {
     async function loadData() {
       try {
-        // Load agent data
-        const agentsRes = await fetch("/agent_response_rates.csv");
-        const agentsText = await agentsRes.text();
-        const agentRows = agentsText.split("\n").slice(1).filter(row => row.trim());
-        const agents = agentRows.map(row => {
-          const [agent_name, agent_notified, agent_responded, grand_total] = row.split(",");
-          const notified = parseInt(agent_notified);
-          const responded = parseInt(agent_responded);
-          const total = parseInt(grand_total);
-          return {
-            agent_name,
-            agent_notified: notified,
-            agent_responded: responded,
-            grand_total: total,
-            response_rate: total > 0 ? (responded / total) * 100 : 0
-          };
-        });
-
-        // Load RealNet agencies
-        const realNetRes = await fetch("/realnet_agency_response_rates.csv");
-        const realNetText = await realNetRes.text();
-        const realNetRows = realNetText.split("\n").slice(1).filter(row => row.trim());
-        const realNet = realNetRows.map(row => {
-          const [agency, agent_notified, agent_responded, grand_total, response_rate] = row.split(",");
-          return {
-            agency,
-            agent_notified: parseInt(agent_notified),
-            agent_responded: parseInt(agent_responded),
-            grand_total: parseInt(grand_total),
-            response_rate: parseFloat(response_rate)
-          };
-        });
-
-        // Load other agencies
-        const otherRes = await fetch("/other_agency_response_rates.csv");
-        const otherText = await otherRes.text();
-        const otherRows = otherText.split("\n").slice(1).filter(row => row.trim());
-        const others = otherRows.map(row => {
-          const [org_name, agency, leads, leads_responded, response_rate] = row.split(",");
-          return {
-            org_name,
-            agency,
-            leads: parseInt(leads),
-            leads_responded: parseInt(leads_responded),
-            response_rate: parseFloat(response_rate)
-          };
-        });
-
-        // Load lead sources from sudonum CSV (Sales only)
-        const salesRes = await fetch("/sales_rental_sudonum.csv");
-        const salesText = await salesRes.text();
-        const salesRows = salesText.split("\n").slice(1).filter(row => row.trim());
+        // Load raw leads data
+        const leadsResponse = await fetch("/sales_rental_sudonum.csv");
+        const leadsText = await leadsResponse.text();
         
-        // Count lead sources for Sales only
-        const sourceCount: Record<string, number> = {};
-        salesRows.forEach(row => {
-          // Simple CSV parse - split by comma but handle quoted fields
-          const cols = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
-          const source = cols[3]?.replace(/^"|"$/g, '').trim(); // Source column (index 3)
-          const leadType = cols[12]?.replace(/^"|"$/g, '').trim(); // lead_type column (index 12)
-          
-          // Only count Sales leads
-          if (source && leadType === 'Sales') {
-            sourceCount[source] = (sourceCount[source] || 0) + 1;
+        Papa.parse<LeadRecord>(leadsText, {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            setRawLeads(results.data);
+          },
+          error: (error) => {
+            console.error("Error parsing leads CSV:", error);
           }
         });
 
-        const totalLeadsSources = Object.values(sourceCount).reduce((sum, count) => sum + count, 0);
-        const sources = Object.entries(sourceCount)
-          .map(([source, count]) => ({
-            source,
-            count,
-            percentage: totalLeadsSources > 0 ? (count / totalLeadsSources) * 100 : 0
-          }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 5); // Top 5 sources
-
-        setAgentData(agents);
-        setRealNetAgencies(realNet);
-        setOtherAgencies(others);
-        setLeadSources(sources);
-        setLoading(false);
+        // Load other agencies data (pre-aggregated)
+        const otherResponse = await fetch("/other_agency_response_rates.csv");
+        const otherText = await otherResponse.text();
+        
+        Papa.parse<OtherAgency>(otherText, {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            setOtherAgenciesData(results.data);
+            setLoading(false);
+          },
+          error: (error) => {
+            console.error("Error parsing other agencies CSV:", error);
+            setLoading(false);
+          }
+        });
       } catch (error) {
         console.error("Error loading data:", error);
         setLoading(false);
@@ -137,6 +77,45 @@ export default function LeadsPage() {
 
     loadData();
   }, []);
+
+  // Apply date filter
+  const getFilteredLeads = () => {
+    let startDate: Date | null = null;
+    let endDate: Date | null = null;
+    const now = new Date();
+
+    switch (dateFilter) {
+      case "ytd":
+        startDate = startOfYear(now);
+        break;
+      case "last12":
+        startDate = subMonths(now, 12);
+        break;
+      case "last6":
+        startDate = subMonths(now, 6);
+        break;
+      case "last3":
+        startDate = subMonths(now, 3);
+        break;
+      default:
+        break;
+    }
+
+    return filterLeadsByDateRange(rawLeads, startDate, endDate);
+  };
+
+  const filteredLeads = getFilteredLeads();
+  
+  // IMPORTANT: Only count SALES leads (exclude rentals)
+  const salesLeads = filteredLeads.filter(l => l.lead_type === 'Sales');
+  
+  // Aggregate data from SALES leads only
+  const agentData = aggregateByAgent(salesLeads);
+  const realNetAgencies = aggregatePEAgencies(salesLeads);
+  const leadSources = calculateLeadSources(salesLeads);
+  
+  // Use pre-loaded other agencies data (not affected by date filter)
+  const otherAgencies = otherAgenciesData;
 
   if (loading) {
     return (
@@ -167,7 +146,7 @@ export default function LeadsPage() {
   const topAgents = sortedAgents.slice(0, 5);
   const bottomAgents = sortedAgents.slice(-5).reverse();
 
-  // Top 5 and Bottom 5 RealNet agencies
+  // Top 5 and Bottom 5 PE agencies
   const sortedAgencies = [...realNetAgencies].sort((a, b) => b.response_rate - a.response_rate);
   const topAgencies = sortedAgencies.slice(0, 5);
   const bottomAgencies = sortedAgencies.slice(-5).reverse();
@@ -179,7 +158,7 @@ export default function LeadsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Leads Performance</h1>
-            <p className="text-gray-600 mt-1">RealNet vs Industry Comparison</p>
+            <p className="text-gray-600 mt-1">Property Engine vs Industry Comparison</p>
           </div>
           
           {/* Date Filter */}
@@ -213,7 +192,7 @@ export default function LeadsPage() {
             <CardContent className="px-6 pb-6">
               <div className="space-y-4">
                 <div className="flex items-baseline justify-between">
-                  <span className="text-sm font-medium text-gray-600">RealNet</span>
+                  <span className="text-sm font-medium text-gray-600">Property Engine</span>
                   <span className="text-2xl font-bold text-gray-900">{realNetTotalLeads.toLocaleString()}</span>
                 </div>
                 <div className="border-t pt-4 flex items-baseline justify-between">
@@ -252,7 +231,7 @@ export default function LeadsPage() {
             <CardContent className="px-6 pb-6">
               <div className="space-y-4">
                 <div className="flex items-baseline justify-between">
-                  <span className="text-sm font-medium text-gray-600">RealNet</span>
+                  <span className="text-sm font-medium text-gray-600">Property Engine</span>
                   <span className="text-2xl font-bold text-green-600">{realNetResponseRate.toFixed(1)}%</span>
                 </div>
                 <div className="border-t pt-4 flex items-baseline justify-between">
@@ -306,12 +285,12 @@ export default function LeadsPage() {
 
         {/* Agency Performance */}
         <div className="grid grid-cols-2 gap-6">
-          {/* Top 5 RealNet Agencies */}
+          {/* Top 5 PE Agencies */}
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-green-600" />
-                Top 5 Performing Agencies (RealNet)
+                Top 5 Performing Agencies (Property Engine)
               </CardTitle>
             </CardHeader>
             <CardContent className="px-6 pb-6">
@@ -336,12 +315,12 @@ export default function LeadsPage() {
             </CardContent>
           </Card>
 
-          {/* Bottom 5 RealNet Agencies */}
+          {/* Bottom 5 PE Agencies */}
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <TrendingDown className="h-5 w-5 text-red-600" />
-                Bottom 5 Performing Agencies (RealNet)
+                Bottom 5 Performing Agencies (Property Engine)
               </CardTitle>
             </CardHeader>
             <CardContent className="px-6 pb-6">
@@ -374,7 +353,7 @@ export default function LeadsPage() {
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-green-600" />
-                Top 5 Performing Agents (RealNet)
+                Top 5 Performing Agents (Property Engine)
               </CardTitle>
               <p className="text-xs text-gray-500 mt-1">Agents with 10+ leads</p>
             </CardHeader>
@@ -390,9 +369,9 @@ export default function LeadsPage() {
                 <tbody className="divide-y divide-gray-100">
                   {topAgents.map((agent, idx) => (
                     <tr key={idx}>
-                      <td className="py-2.5 font-medium text-gray-700 pr-4">{agent.agent_name}</td>
+                      <td className="py-2.5 font-medium text-gray-700 pr-4" title={agent.agent_name}>{agent.agent_name}</td>
                       <td className="py-2.5 text-right text-gray-600 tabular-nums w-20 pr-3">{agent.grand_total}</td>
-                      <td className="py-2.5 text-right font-semibold text-green-600 tabular-nums w-28">{agent.response_rate?.toFixed(1)}%</td>
+                      <td className="py-2.5 text-right font-semibold text-green-600 tabular-nums w-28">{agent.response_rate.toFixed(1)}%</td>
                     </tr>
                   ))}
                 </tbody>
@@ -405,7 +384,7 @@ export default function LeadsPage() {
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <TrendingDown className="h-5 w-5 text-red-600" />
-                Bottom 5 Performing Agents (RealNet)
+                Bottom 5 Performing Agents (Property Engine)
               </CardTitle>
               <p className="text-xs text-gray-500 mt-1">Agents with 10+ leads</p>
             </CardHeader>
@@ -421,9 +400,9 @@ export default function LeadsPage() {
                 <tbody className="divide-y divide-gray-100">
                   {bottomAgents.map((agent, idx) => (
                     <tr key={idx}>
-                      <td className="py-2.5 font-medium text-gray-700 pr-4">{agent.agent_name}</td>
+                      <td className="py-2.5 font-medium text-gray-700 pr-4" title={agent.agent_name}>{agent.agent_name}</td>
                       <td className="py-2.5 text-right text-gray-600 tabular-nums w-20 pr-3">{agent.grand_total}</td>
-                      <td className="py-2.5 text-right font-semibold text-red-600 tabular-nums w-28">{agent.response_rate?.toFixed(1)}%</td>
+                      <td className="py-2.5 text-right font-semibold text-red-600 tabular-nums w-28">{agent.response_rate.toFixed(1)}%</td>
                     </tr>
                   ))}
                 </tbody>

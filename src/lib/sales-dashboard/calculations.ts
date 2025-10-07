@@ -36,6 +36,60 @@ export function filterLeadsByDateRange(
 }
 
 /**
+ * Normalize agency name for matching
+ * Removes location details in parentheses and after slashes
+ * Examples:
+ * - "PE Bosveld (Thabazimbi)" -> "PE Bosveld"
+ * - "PE George / Wilderness" -> "PE George"
+ * - "PE Select (Cape Town – Strandfontein / Michells Plain)" -> "PE Select"
+ */
+function normalizeAgencyName(name: string): string {
+  return name
+    .split('(')[0]      // Remove everything after (
+    .split('/')[0]      // Remove everything after /
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim();
+}
+
+/**
+ * Filter leads data by selected agencies
+ * Normalizes names to handle variations like "PE George" vs "PE George / Wilderness"
+ */
+export function filterLeadsByAgencies(
+  data: LeadRecord[],
+  agencies: string[]
+): LeadRecord[] {
+  if (agencies.length === 0) return data;
+  
+  // Normalize the selected agencies
+  const normalizedAgencies = agencies.map(normalizeAgencyName);
+  
+  console.log('filterLeadsByAgencies called with:', {
+    totalLeads: data.length,
+    originalAgencies: agencies,
+    normalizedAgencies: normalizedAgencies,
+    sampleFranchises: data.slice(0, 5).map(l => l.Franchise),
+    sampleNormalized: data.slice(0, 5).map(l => normalizeAgencyName(l.Franchise))
+  });
+  
+  const filtered = data.filter(lead => 
+    normalizedAgencies.includes(normalizeAgencyName(lead.Franchise))
+  );
+  
+  console.log('filterLeadsByAgencies result:', {
+    filteredLeads: filtered.length,
+    sampleFiltered: filtered.slice(0, 3).map(l => ({ 
+      franchise: l.Franchise, 
+      normalized: normalizeAgencyName(l.Franchise),
+      status: l.Status, 
+      type: l.lead_type 
+    }))
+  });
+  
+  return filtered;
+}
+
+/**
  * Filter sales data by selected agencies
  */
 export function filterByAgencies(

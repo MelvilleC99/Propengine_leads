@@ -15,6 +15,7 @@ import {
   filterByAgencies,
   filterByDateRange,
   filterLeadsByDateRange,
+  filterLeadsByAgencies,
 } from "@/lib/sales-dashboard/calculations";
 import type { SalesRecord, LeadRecord } from "@/types/data";
 import { subMonths, startOfYear, parseISO } from "date-fns";
@@ -68,6 +69,7 @@ export default function SalesDashboard() {
     // Filter by agencies
     if (selectedAgencies.length > 0) {
       filtered = filterByAgencies(filtered, selectedAgencies);
+      filteredLeads = filterLeadsByAgencies(filteredLeads, selectedAgencies);
     }
 
     // Filter by date range
@@ -105,9 +107,17 @@ export default function SalesDashboard() {
   };
 
   const currentData = filteredData();
+  
+  // Debug logging
+  console.log('=== FILTERING DEBUG ===');
+  console.log('Selected agencies:', selectedAgencies);
+  console.log('Filtered sales:', currentData.sales.length);
+  console.log('Filtered leads:', currentData.leads.length);
+  console.log('Sales leads only:', currentData.leads.filter(l => l.lead_type === 'Sales').length);
 
   // Calculate metrics
   const metrics = calculateOverviewMetrics(currentData.sales, currentData.leads);
+  console.log('Calculated metrics:', metrics);
   const leadSourceBreakdown = calculateLeadSourceBreakdown(currentData.sales);
   const monthlyRevenue = calculateMonthlyRevenue(currentData.sales);
 
