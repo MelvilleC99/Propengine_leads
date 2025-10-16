@@ -64,22 +64,23 @@ export async function loadPropertyData(): Promise<Array<Record<string, unknown>>
       skipEmptyLines: true,
       complete: (results) => {
         // Parse the data and convert dates
-        const data = results.data.map((row: Record<string, unknown>) => {
+        const data = results.data.map((row: unknown) => {
+          const r = row as Record<string, unknown>;
           // Parse price - remove "R " and spaces, then convert to number
-          const priceStr = row.Price?.replace(/R\s*/g, '').replace(/\s/g, '') || '0';
+          const priceStr = (r.Price as string)?.replace(/R\s*/g, '').replace(/\s/g, '') || '0';
           const price = parseInt(priceStr, 10);
 
           // Parse dates
-          const listingDate = row['Listing Date'] ? new Date(row['Listing Date']) : new Date();
-          const offerDate = row['Offer Date'] ? new Date(row['Offer Date']) : null;
+          const listingDate = r['Listing Date'] ? new Date(r['Listing Date'] as string) : new Date();
+          const offerDate = r['Offer Date'] ? new Date(r['Offer Date'] as string) : null;
 
           return {
             price,
-            location: row.Location || '',
-            propertyType: row['Property Type'] || '',
-            status: row.Status || '',
-            agency: row.Agency || '',
-            agentName: row['Agent Name'] || '',
+            location: r.Location || '',
+            propertyType: r['Property Type'] || '',
+            status: r.Status || '',
+            agency: r.Agency || '',
+            agentName: r['Agent Name'] || '',
             listingDate,
             offerDate,
           };
