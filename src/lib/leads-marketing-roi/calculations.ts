@@ -1,6 +1,6 @@
 // Lead Marketing ROI calculations
 import _ from 'lodash';
-import { parseISO, format } from 'date-fns';
+import { parseISO } from 'date-fns';
 
 interface LeadRecord {
   'Date (SAST)': string;
@@ -224,6 +224,7 @@ export function calculateOverallROI(
   endDate: Date | null
 ): { p24: ROIMetrics; pp: ROIMetrics; combined: ROIMetrics } {
   // Calculate months based on date range
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const months = calculateMonths(startDate, endDate);
   // Filter leads (Sales type only)
   const salesLeads = leadsData.filter(l => l.lead_type === 'Sales');

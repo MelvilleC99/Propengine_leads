@@ -15,7 +15,7 @@ import {
 } from "@/lib/leads-marketing-roi/calculations";
 import type { SalesRecord, LeadRecord } from "@/types/data";
 import type { AgencySpend } from "@/lib/leads-marketing-roi/calculations";
-import { startOfYear, subMonths } from "date-fns";
+import { startOfYear } from "date-fns";
 
 export default function LeadsMarketingROIDashboard() {
   const [salesData, setSalesData] = useState<SalesRecord[]>([]);
@@ -66,7 +66,6 @@ export default function LeadsMarketingROIDashboard() {
     // Filter by date range and months
     let startDate: Date | null = null;
     let endDate: Date | null = null;
-    const now = new Date();
     
     // If specific months are selected, use them
     if (selectedMonths.length > 0) {

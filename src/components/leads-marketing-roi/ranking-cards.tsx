@@ -31,11 +31,6 @@ export function RankingCards({ agencyMetrics }: RankingCardsProps) {
     return `R${value.toFixed(2)}`;
   };
 
-  // Filter agencies with actual data
-  const validAgencies = agencyMetrics.filter(a => 
-    a.totalLeads > 0 || a.totalSales > 0
-  );
-
   // Cost Per Lead Rankings - Filter only agencies with leads for that source
   const cplP24Ranked = agencyMetrics
     .filter(a => a.p24Metrics.totalLeads > 0)

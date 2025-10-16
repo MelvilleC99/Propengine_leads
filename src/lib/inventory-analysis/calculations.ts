@@ -1,4 +1,4 @@
-import { parseISO, isAfter, isBefore, differenceInDays, isWithinInterval } from "date-fns";
+import { isAfter, differenceInDays, isWithinInterval } from "date-fns";
 import type { PropertyRecord, MovementMetrics, AgingBreakdown, ValueMetrics } from "./types";
 
 /**
@@ -270,6 +270,7 @@ export function calculateAverageStockTurn(
  */
 export function calculateSuburbStockTurn(
   data: PropertyRecord[],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   endDate: Date | null
 ): Map<string, number> {
   const suburbTurnMap = new Map<string, number>();

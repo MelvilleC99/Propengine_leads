@@ -56,7 +56,7 @@ export async function loadLeadsData(): Promise<LeadRecord[]> {
 /**
  * Load property inventory data from CSV file
  */
-export async function loadPropertyData(): Promise<any[]> {
+export async function loadPropertyData(): Promise<Array<Record<string, unknown>>> {
   return new Promise((resolve, reject) => {
     Papa.parse('/Leon_cleaned.csv', {
       download: true,
@@ -64,7 +64,7 @@ export async function loadPropertyData(): Promise<any[]> {
       skipEmptyLines: true,
       complete: (results) => {
         // Parse the data and convert dates
-        const data = results.data.map((row: any) => {
+        const data = results.data.map((row: Record<string, unknown>) => {
           // Parse price - remove "R " and spaces, then convert to number
           const priceStr = row.Price?.replace(/R\s*/g, '').replace(/\s/g, '') || '0';
           const price = parseInt(priceStr, 10);

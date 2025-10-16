@@ -9,13 +9,9 @@ import { subMonths, startOfYear } from 'date-fns';
 import Papa from 'papaparse';
 import {
   type LeadRecord,
-  type AgentData,
-  type AgencyData,
-  type LeadSource,
   filterLeadsByDateRange,
   aggregateByAgent,
   aggregatePEAgencies,
-  aggregateCompetitorAgencies,
   calculateLeadSources,
 } from '@/lib/leads-performance/calculations';
 

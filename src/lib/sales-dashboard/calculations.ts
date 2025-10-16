@@ -224,6 +224,7 @@ export function calculateMonthlyRevenue(
   });
   
   // Sort by monthKey (yyyy-MM format) to get chronological order
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return _.sortBy(monthlyData, 'monthKey').map(({ monthKey, ...rest }) => rest);
 }
 
