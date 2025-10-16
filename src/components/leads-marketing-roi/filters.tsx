@@ -56,7 +56,7 @@ export function Filters({
           <SelectTrigger id="agency-filter" className="w-full">
             <SelectValue placeholder="All Agencies" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-[300px] overflow-y-auto">
             <SelectItem value="all">All Agencies</SelectItem>
             {agencies.map((agency) => (
               <SelectItem key={agency} value={agency}>
