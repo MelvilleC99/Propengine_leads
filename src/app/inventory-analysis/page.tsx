@@ -37,10 +37,10 @@ export default function InventoryAnalysisDashboard() {
       try {
         setLoading(true);
         const data = await loadPropertyData();
-        setPropertyData(data as PropertyRecord[]);
+        setPropertyData(data as unknown as PropertyRecord[]);
         
         // Extract unique agencies
-        const uniqueAgencies = getUniqueAgencies(data as PropertyRecord[]);
+        const uniqueAgencies = getUniqueAgencies(data as unknown as PropertyRecord[]);
         setAgencies(uniqueAgencies);
         
         setLoading(false);
