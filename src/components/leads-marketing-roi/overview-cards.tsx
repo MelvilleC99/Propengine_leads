@@ -30,37 +30,34 @@ export function OverviewCards({ p24Metrics, ppMetrics }: OverviewCardsProps) {
     p24Subtitle: string,
     ppSubtitle: string
   ) => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-sm font-medium text-gray-700">{title}</CardTitle>
+    <Card className="overflow-hidden">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg font-bold text-blue-900">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 pt-0">
         {/* Property24 */}
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-blue-600">Property24</span>
-          </div>
-          <div className="text-2xl font-bold text-gray-900">{p24Value}</div>
-          <p className="text-xs text-gray-500">{p24Subtitle}</p>
+        <div className="space-y-0.5">
+          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Property24</span>
+          <div className="text-3xl font-bold text-gray-900 leading-tight">{p24Value}</div>
+          <p className="text-sm text-gray-600">{p24Subtitle}</p>
         </div>
         
         {/* Divider */}
         <div className="border-t border-gray-200"></div>
         
         {/* Private Property */}
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-purple-600">Private Property</span>
-          </div>
-          <div className="text-2xl font-bold text-gray-900">{ppValue}</div>
-          <p className="text-xs text-gray-500">{ppSubtitle}</p>
+        <div className="space-y-0.5">
+          <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Private Property</span>
+          <div className="text-3xl font-bold text-gray-900 leading-tight">{ppValue}</div>
+          <p className="text-sm text-gray-600">{ppSubtitle}</p>
         </div>
       </CardContent>
     </Card>
   );
 
   return (
-    <div className="grid grid-cols-4 gap-6">
+    <div className="grid grid-cols-3 gap-6">
+      {/* Row 1 */}
       {/* Cost Per Lead */}
       {renderMetricCard(
         "Cost Per Lead",
@@ -88,7 +85,26 @@ export function OverviewCards({ p24Metrics, ppMetrics }: OverviewCardsProps) {
         `${ppMetrics.respondedLeads.toLocaleString()} responded (${ppMetrics.responseRate.toFixed(1)}%)`
       )}
 
-      {/* Wasted Cost Per Lead - Show TOTAL wasted amount */}
+      {/* Row 2 */}
+      {/* Revenue Per R1 Spent */}
+      {renderMetricCard(
+        "Revenue per R1 Spent",
+        `R${p24Metrics.revenuePerRandSpent.toFixed(2)}`,
+        `R${ppMetrics.revenuePerRandSpent.toFixed(2)}`,
+        `Total: ${formatCurrencyShort(p24Metrics.totalRevenue)}`,
+        `Total: ${formatCurrencyShort(ppMetrics.totalRevenue)}`
+      )}
+
+      {/* Commission Per R1 Spent */}
+      {renderMetricCard(
+        "Commission per R1 Spent",
+        `R${p24Metrics.commissionPerRandSpent.toFixed(2)}`,
+        `R${ppMetrics.commissionPerRandSpent.toFixed(2)}`,
+        `Total: ${formatCurrencyShort(p24Metrics.totalCommission)}`,
+        `Total: ${formatCurrencyShort(ppMetrics.totalCommission)}`
+      )}
+
+      {/* Wasted Marketing Spend */}
       {renderMetricCard(
         "Total Wasted Marketing Spend",
         formatCurrencyShort(p24Metrics.wastedSpend),

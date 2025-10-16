@@ -1,31 +1,61 @@
-account_name,agent_count,p24_monthly_spend,pp_monthly_spend
-PE Auctions,2,115.77,28.94
-PE Bela-Bela Lifestyle,11,636.76,159.19
-PE Bloemfontein,188,10882.78,2720.69
-PE Bosveld,28,1620.84,405.21
-PE Brits,21,1215.63,303.91
-PE Centurion Core,33,1910.27,477.57
-PE City Bowl & Atlantic Seaboard,2,115.77,28.94
-PE George,40,2315.48,578.87
-PE Hartbeespoort,24,1389.29,347.32
-PE Hermanus,3,173.66,43.42
-PE Kimberley,40,2315.48,578.87
-PE Klerksdorp,9,520.98,130.25
-PE Kuils River,27,1562.95,390.74
-PE Midstream Estates,55,3183.79,795.95
-PE Platinum,70,4052.1,1013.02
-PE Polokwane,20,1157.74,289.44
-PE Pretoria North,86,4978.29,1244.57
-PE Pristine,63,3646.89,911.72
-PE Premium,421,24370.48,6092.62
-PE Premium AGRI - Farms & Smallholdings,8,463.1,115.77
-PE Randburg,7,405.21,101.3
-PE Rustenburg,43,2489.15,622.29
-PE Sedgefield,6,347.32,86.83
-PE Select,23,1331.4,332.85
-PE Sterling,44,2547.03,636.76
-PE Test Account,14,810.42,202.6
-PE Vryburg,10,578.87,144.72
-PE West Coast,6,347.32,86.83
-PE Wild Frontier,26,1505.07,376.27
-PE Witbank,52,3010.13,752.53
+account_name,agent_count,month,year,p24_monthly_spend,pp_monthly_spend
+PE Auctions,2,8,2025,115.77,28.94
+PE Auctions,2,9,2025,115.77,28.94
+PE Bela-Bela Lifestyle,11,8,2025,636.76,159.19
+PE Bela-Bela Lifestyle,11,9,2025,636.76,159.19
+PE Bloemfontein,188,8,2025,10882.78,2720.69
+PE Bloemfontein,188,9,2025,10882.78,2720.69
+PE Bosveld,28,8,2025,1620.84,405.21
+PE Bosveld,28,9,2025,1620.84,405.21
+PE Brits,21,8,2025,1215.63,303.91
+PE Brits,21,9,2025,1215.63,303.91
+PE Centurion Core,33,8,2025,1910.27,477.57
+PE Centurion Core,33,9,2025,1910.27,477.57
+PE City Bowl & Atlantic Seaboard,2,8,2025,115.77,28.94
+PE City Bowl & Atlantic Seaboard,2,9,2025,115.77,28.94
+PE George,40,8,2025,2315.48,578.87
+PE George,40,9,2025,2315.48,578.87
+PE Hartbeespoort,24,8,2025,1389.29,347.32
+PE Hartbeespoort,24,9,2025,1389.29,347.32
+PE Hermanus,3,8,2025,173.66,43.42
+PE Hermanus,3,9,2025,173.66,43.42
+PE Kimberley,40,8,2025,2315.48,578.87
+PE Kimberley,40,9,2025,2315.48,578.87
+PE Klerksdorp,9,8,2025,520.98,130.25
+PE Klerksdorp,9,9,2025,520.98,130.25
+PE Kuils River,27,8,2025,1562.95,390.74
+PE Kuils River,27,9,2025,1562.95,390.74
+PE Midstream Estates,55,8,2025,3183.79,795.95
+PE Midstream Estates,55,9,2025,3183.79,795.95
+RealNet Platinum,70,8,2025,17116.52,10663.47
+RealNet Platinum,70,9,2025,19722.60,17069.56
+PE Polokwane,20,8,2025,1157.74,289.44
+PE Polokwane,20,9,2025,1157.74,289.44
+PE Pretoria North,86,8,2025,4978.29,1244.57
+PE Pretoria North,86,9,2025,4978.29,1244.57
+PE Pristine,63,8,2025,3646.89,911.72
+PE Pristine,63,9,2025,3646.89,911.72
+RealNet Rainmaker,421,8,2025,76244.50,32683.00
+RealNet Rainmaker,421,9,2025,78183.25,29409.50
+PE Premium AGRI - Farms & Smallholdings,8,8,2025,463.10,115.77
+PE Premium AGRI - Farms & Smallholdings,8,9,2025,463.10,115.77
+PE Randburg,7,8,2025,405.21,101.30
+PE Randburg,7,9,2025,405.21,101.30
+PE Rustenburg,43,8,2025,2489.15,622.29
+PE Rustenburg,43,9,2025,2489.15,622.29
+PE Sedgefield,6,8,2025,347.32,86.83
+PE Sedgefield,6,9,2025,347.32,86.83
+PE Select,23,8,2025,1331.40,332.85
+PE Select,23,9,2025,1331.40,332.85
+PE Sterling,44,8,2025,2547.03,636.76
+PE Sterling,44,9,2025,2547.03,636.76
+PE Test Account,14,8,2025,810.42,202.60
+PE Test Account,14,9,2025,810.42,202.60
+PE Vryburg,10,8,2025,578.87,144.72
+PE Vryburg,10,9,2025,578.87,144.72
+PE West Coast,6,8,2025,347.32,86.83
+PE West Coast,6,9,2025,347.32,86.83
+PE Wild Frontier,26,8,2025,1505.07,376.27
+PE Wild Frontier,26,9,2025,1505.07,376.27
+PE Witbank,52,8,2025,3010.13,752.53
+PE Witbank,52,9,2025,3010.13,752.53

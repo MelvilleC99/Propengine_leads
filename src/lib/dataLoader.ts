@@ -51,3 +51,46 @@ export async function loadLeadsData(): Promise<LeadRecord[]> {
     });
   });
 }
+
+
+/**
+ * Load property inventory data from CSV file
+ */
+export async function loadPropertyData(): Promise<any[]> {
+  return new Promise((resolve, reject) => {
+    Papa.parse('/Leon_cleaned.csv', {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        // Parse the data and convert dates
+        const data = results.data.map((row: any) => {
+          // Parse price - remove "R " and spaces, then convert to number
+          const priceStr = row.Price?.replace(/R\s*/g, '').replace(/\s/g, '') || '0';
+          const price = parseInt(priceStr, 10);
+
+          // Parse dates
+          const listingDate = row['Listing Date'] ? new Date(row['Listing Date']) : new Date();
+          const offerDate = row['Offer Date'] ? new Date(row['Offer Date']) : null;
+
+          return {
+            price,
+            location: row.Location || '',
+            propertyType: row['Property Type'] || '',
+            status: row.Status || '',
+            agency: row.Agency || '',
+            agentName: row['Agent Name'] || '',
+            listingDate,
+            offerDate,
+          };
+        });
+        
+        resolve(data);
+      },
+      error: (error) => {
+        console.error('Error loading property data:', error);
+        reject(error);
+      }
+    });
+  });
+}

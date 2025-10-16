@@ -23,6 +23,8 @@ interface SalesRecord {
 interface AgencySpend {
   account_name: string;
   agent_count: number;
+  month: number;
+  year: number;
   p24_monthly_spend: number;
   pp_monthly_spend: number;
 }
@@ -39,6 +41,10 @@ interface ROIMetrics {
   responseRate: number;
   wastageRate: number;
   wastedSpend: number;
+  totalRevenue: number;
+  totalCommission: number;
+  revenuePerRandSpent: number;
+  commissionPerRandSpent: number;
 }
 
 interface AgencyROIMetrics extends ROIMetrics {
@@ -125,22 +131,67 @@ function calculateMonths(startDate: Date | null, endDate: Date | null): number {
 }
 
 /**
- * Calculate ROI metrics for a specific source
+ * Calculate actual spend from agency spend records based on date range
+ * This sums the actual monthly spend for each month in the date range
+ */
+function calculateActualSpend(
+  agencySpends: AgencySpend[],
+  agencyName: string | null,
+  startDate: Date | null,
+  endDate: Date | null,
+  portal: 'p24' | 'pp'
+): number {
+  // Filter spend records by agency if specified
+  let relevantSpends = agencySpends;
+  
+  if (agencyName && agencyName !== 'all') {
+    relevantSpends = agencySpends.filter(s => s.account_name === agencyName);
+  }
+  
+  // Filter by date range
+  if (startDate && endDate) {
+    relevantSpends = relevantSpends.filter(s => {
+      const spendDate = new Date(s.year, s.month - 1, 1); // month is 1-indexed in CSV
+      return spendDate >= startDate && spendDate <= endDate;
+    });
+  }
+  
+  // Sum the spend for the specified portal
+  const spendKey = portal === 'p24' ? 'p24_monthly_spend' : 'pp_monthly_spend';
+  const totalSpend = _.sumBy(relevantSpends, spendKey);
+  
+  console.log('calculateActualSpend:', { 
+    agencyName, 
+    portal, 
+    startDate, 
+    endDate, 
+    recordCount: relevantSpends.length,
+    totalSpend 
+  });
+  
+  return totalSpend;
+}
+
+/**
+ * Calculate ROI metrics for a specific source using actual spend data
  */
 function calculateSourceMetrics(
   leads: LeadRecord[],
   sales: SalesRecord[],
-  monthlySpend: number,
-  months: number
+  totalSpend: number
 ): ROIMetrics {
-  const totalSpend = monthlySpend * months;
   const totalLeads = leads.length;
   const respondedLeads = leads.filter(l => l.Status === 'Agent Responded').length;
   const totalSales = sales.length;
   
+  // Calculate revenue and commission from sales
+  const totalRevenue = sales.reduce((sum, sale) => sum + (sale.purchase_amount || 0), 0);
+  const totalCommission = sales.reduce((sum, sale) => sum + (sale.commission_amount || 0), 0);
+  
+  // If there are no leads, we can't calculate wastage
   const responseRate = totalLeads > 0 ? (respondedLeads / totalLeads) * 100 : 0;
-  const wastageRate = 100 - responseRate;
-  const wastedSpend = totalSpend * (wastageRate / 100);
+  const wastageRate = totalLeads > 0 ? 100 - responseRate : 0;
+  const wastedSpend = totalLeads > 0 ? totalSpend * (wastageRate / 100) : 0;
   
   return {
     totalLeads,
@@ -153,7 +204,11 @@ function calculateSourceMetrics(
     wastedCostPerLead: (totalLeads - respondedLeads) > 0 ? wastedSpend / (totalLeads - respondedLeads) : 0,
     responseRate,
     wastageRate,
-    wastedSpend
+    wastedSpend,
+    totalRevenue,
+    totalCommission,
+    revenuePerRandSpent: totalSpend > 0 ? totalRevenue / totalSpend : 0,
+    commissionPerRandSpent: totalSpend > 0 ? totalCommission / totalSpend : 0,
   };
 }
 
@@ -204,23 +259,12 @@ export function calculateOverallROI(
   const p24Sales = filteredSales.filter(s => s.lead_source === 'Property24');
   const ppSales = filteredSales.filter(s => s.lead_source === 'Private Property');
   
-  // Calculate total monthly spend
-  let p24MonthlySpend = 0;
-  let ppMonthlySpend = 0;
+  // Calculate actual spend for the date range
+  const p24TotalSpend = calculateActualSpend(agencySpends, selectedAgency, startDate, endDate, 'p24');
+  const ppTotalSpend = calculateActualSpend(agencySpends, selectedAgency, startDate, endDate, 'pp');
   
-  if (selectedAgency && selectedAgency !== 'all') {
-    const agencyData = agencySpends.find(a => a.account_name === selectedAgency);
-    if (agencyData) {
-      p24MonthlySpend = agencyData.p24_monthly_spend;
-      ppMonthlySpend = agencyData.pp_monthly_spend;
-    }
-  } else {
-    p24MonthlySpend = _.sumBy(agencySpends, 'p24_monthly_spend');
-    ppMonthlySpend = _.sumBy(agencySpends, 'pp_monthly_spend');
-  }
-  
-  const p24Metrics = calculateSourceMetrics(p24Leads, p24Sales, p24MonthlySpend, months);
-  const ppMetrics = calculateSourceMetrics(ppLeads, ppSales, ppMonthlySpend, months);
+  const p24Metrics = calculateSourceMetrics(p24Leads, p24Sales, p24TotalSpend);
+  const ppMetrics = calculateSourceMetrics(ppLeads, ppSales, ppTotalSpend);
   
   // Combined metrics
   const combinedMetrics: ROIMetrics = {
@@ -228,19 +272,25 @@ export function calculateOverallROI(
     respondedLeads: p24Metrics.respondedLeads + ppMetrics.respondedLeads,
     totalSales: p24Metrics.totalSales + ppMetrics.totalSales,
     totalSpend: p24Metrics.totalSpend + ppMetrics.totalSpend,
+    totalRevenue: p24Metrics.totalRevenue + ppMetrics.totalRevenue,
+    totalCommission: p24Metrics.totalCommission + ppMetrics.totalCommission,
     costPerLead: 0,
     costPerSale: 0,
     effectiveCostPerLead: 0,
     wastedCostPerLead: 0,
     responseRate: 0,
     wastageRate: 0,
-    wastedSpend: p24Metrics.wastedSpend + ppMetrics.wastedSpend
+    wastedSpend: p24Metrics.wastedSpend + ppMetrics.wastedSpend,
+    revenuePerRandSpent: 0,
+    commissionPerRandSpent: 0,
   };
   
   const totalLeads = combinedMetrics.totalLeads;
   const respondedLeads = combinedMetrics.respondedLeads;
   const totalSales = combinedMetrics.totalSales;
   const totalSpend = combinedMetrics.totalSpend;
+  const totalRevenue = combinedMetrics.totalRevenue;
+  const totalCommission = combinedMetrics.totalCommission;
   
   combinedMetrics.costPerLead = totalLeads > 0 ? totalSpend / totalLeads : 0;
   combinedMetrics.costPerSale = totalSales > 0 ? totalSpend / totalSales : 0;
@@ -249,6 +299,8 @@ export function calculateOverallROI(
     ? combinedMetrics.wastedSpend / (totalLeads - respondedLeads) : 0;
   combinedMetrics.responseRate = totalLeads > 0 ? (respondedLeads / totalLeads) * 100 : 0;
   combinedMetrics.wastageRate = 100 - combinedMetrics.responseRate;
+  combinedMetrics.revenuePerRandSpent = totalSpend > 0 ? totalRevenue / totalSpend : 0;
+  combinedMetrics.commissionPerRandSpent = totalSpend > 0 ? totalCommission / totalSpend : 0;
   
   return {
     p24: p24Metrics,
@@ -268,10 +320,12 @@ export function calculateAgencyROI(
   endDate: Date | null
 ): AgencyROIMetrics[] {
   const salesLeads = leadsData.filter(l => l.lead_type === 'Sales');
-  const months = calculateMonths(startDate, endDate);
   
-  return agencySpends.map(agencySpend => {
-    const agencyName = agencySpend.account_name;
+  // Get unique agency names
+  const uniqueAgencies = _.uniqBy(agencySpends, 'account_name');
+  
+  return uniqueAgencies.map(agencyRecord => {
+    const agencyName = agencyRecord.account_name;
     const normalizedSpendName = normalizeAgencyName(agencyName);
     
     // Filter data for this agency using normalized name matching
@@ -282,25 +336,19 @@ export function calculateAgencyROI(
       normalizeAgencyName(s.account_name) === normalizedSpendName
     );
     
+    // Calculate actual spend for this agency
+    const p24TotalSpend = calculateActualSpend(agencySpends, agencyName, startDate, endDate, 'p24');
+    const ppTotalSpend = calculateActualSpend(agencySpends, agencyName, startDate, endDate, 'pp');
+    
     // P24 metrics
     const p24Leads = agencyLeads.filter(l => l.Source === 'Property24');
     const p24Sales = agencySales.filter(s => s.lead_source === 'Property24');
-    const p24Metrics = calculateSourceMetrics(
-      p24Leads, 
-      p24Sales, 
-      agencySpend.p24_monthly_spend, 
-      months
-    );
+    const p24Metrics = calculateSourceMetrics(p24Leads, p24Sales, p24TotalSpend);
     
     // PP metrics
     const ppLeads = agencyLeads.filter(l => l.Source === 'Private Property');
     const ppSales = agencySales.filter(s => s.lead_source === 'Private Property');
-    const ppMetrics = calculateSourceMetrics(
-      ppLeads, 
-      ppSales, 
-      agencySpend.pp_monthly_spend, 
-      months
-    );
+    const ppMetrics = calculateSourceMetrics(ppLeads, ppSales, ppTotalSpend);
     
     // Combined metrics for agency
     const totalSpend = p24Metrics.totalSpend + ppMetrics.totalSpend;
@@ -308,6 +356,8 @@ export function calculateAgencyROI(
     const respondedLeads = p24Metrics.respondedLeads + ppMetrics.respondedLeads;
     const totalSales = p24Metrics.totalSales + ppMetrics.totalSales;
     const wastedSpend = p24Metrics.wastedSpend + ppMetrics.wastedSpend;
+    const totalRevenue = p24Metrics.totalRevenue + ppMetrics.totalRevenue;
+    const totalCommission = p24Metrics.totalCommission + ppMetrics.totalCommission;
     
     const responseRate = totalLeads > 0 ? (respondedLeads / totalLeads) * 100 : 0;
     
@@ -317,6 +367,8 @@ export function calculateAgencyROI(
       respondedLeads,
       totalSales,
       totalSpend,
+      totalRevenue,
+      totalCommission,
       costPerLead: totalLeads > 0 ? totalSpend / totalLeads : 0,
       costPerSale: totalSales > 0 ? totalSpend / totalSales : 0,
       effectiveCostPerLead: respondedLeads > 0 ? totalSpend / respondedLeads : 0,
@@ -325,6 +377,8 @@ export function calculateAgencyROI(
       responseRate,
       wastageRate: 100 - responseRate,
       wastedSpend,
+      revenuePerRandSpent: totalSpend > 0 ? totalRevenue / totalSpend : 0,
+      commissionPerRandSpent: totalSpend > 0 ? totalCommission / totalSpend : 0,
       p24Metrics,
       ppMetrics
     };
@@ -335,7 +389,7 @@ export function calculateAgencyROI(
  * Get unique agencies for filter
  */
 export function getUniqueAgencies(agencySpends: AgencySpend[]): string[] {
-  return _.sortBy(agencySpends.map(a => a.account_name));
+  return _.sortBy(_.uniq(agencySpends.map(a => a.account_name)));
 }
 
 export type { ROIMetrics, AgencyROIMetrics, LeadRecord, SalesRecord, AgencySpend };
