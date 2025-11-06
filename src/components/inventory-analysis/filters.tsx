@@ -53,7 +53,7 @@ export function Filters({
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 items-end">
+      <div className="flex flex-col md:flex-row gap-4 md:items-end">
         <div className="flex-1">
           <Label htmlFor="agency-filter" className="text-sm font-medium text-gray-700">
             Filter by Agency
@@ -76,7 +76,7 @@ export function Filters({
           </Select>
         </div>
 
-        <div className="w-64">
+        <div className="flex-1 md:w-64 md:flex-none">
           <Label htmlFor="date-filter" className="text-sm font-medium text-gray-700">
             Date Range
           </Label>
@@ -96,7 +96,7 @@ export function Filters({
       </div>
 
       {dateRange === "custom" && (
-        <div className="flex gap-4 items-end">
+        <div className="flex flex-col md:flex-row gap-4 md:items-end">
           <div className="flex-1">
             <Label htmlFor="start-date" className="text-sm font-medium text-gray-700">
               Start Date
@@ -119,7 +119,7 @@ export function Filters({
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
-          <Button onClick={handleApplyCustomDates}>
+          <Button onClick={handleApplyCustomDates} className="w-full md:w-auto">
             Apply
           </Button>
         </div>

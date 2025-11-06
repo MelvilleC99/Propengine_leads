@@ -32,14 +32,14 @@ export function OverviewCards({ p24Metrics, ppMetrics }: OverviewCardsProps) {
   ) => (
     <Card className="overflow-hidden">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-bold text-blue-900">{title}</CardTitle>
+        <CardTitle className="text-base md:text-lg font-bold text-blue-900">{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 pt-0">
         {/* Property24 */}
         <div className="space-y-0.5">
           <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Property24</span>
-          <div className="text-3xl font-bold text-gray-900 leading-tight">{p24Value}</div>
-          <p className="text-sm text-gray-600">{p24Subtitle}</p>
+          <div className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{p24Value}</div>
+          <p className="text-xs md:text-sm text-gray-600">{p24Subtitle}</p>
         </div>
         
         {/* Divider */}
@@ -48,15 +48,15 @@ export function OverviewCards({ p24Metrics, ppMetrics }: OverviewCardsProps) {
         {/* Private Property */}
         <div className="space-y-0.5">
           <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Private Property</span>
-          <div className="text-3xl font-bold text-gray-900 leading-tight">{ppValue}</div>
-          <p className="text-sm text-gray-600">{ppSubtitle}</p>
+          <div className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{ppValue}</div>
+          <p className="text-xs md:text-sm text-gray-600">{ppSubtitle}</p>
         </div>
       </CardContent>
     </Card>
   );
 
   return (
-    <div className="grid grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       {/* Row 1 */}
       {/* Cost Per Lead */}
       {renderMetricCard(

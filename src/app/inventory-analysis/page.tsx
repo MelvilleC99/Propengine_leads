@@ -135,11 +135,11 @@ export default function InventoryAnalysisDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Inventory Analysis</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Inventory Analysis</h1>
+          <p className="text-sm md:text-base text-gray-600">
             Track property inventory movement, aging, and values
           </p>
         </div>
@@ -167,7 +167,7 @@ export default function InventoryAnalysisDashboard() {
         />
 
         {/* Stock Aging + Suburb Analysis */}
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
           <AgingCard aging={agingBreakdown} />
           <SuburbCard suburbs={topSuburbs} />
         </div>

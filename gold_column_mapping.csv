@@ -1,0 +1,44 @@
+Gold Column,Source Table,Source Column,Join Path,Status,Notes
+lead_property_id,AUTO_INCREMENT,-,N/A,Working,Primary key - auto generated
+lead_id,residential_sale_lead,lead_id,Direct,Working,Links to proptech.lead table
+lead_first_name,lead,first_name,residential_sale_lead -> lead,Working,
+lead_last_name,lead,last_name,residential_sale_lead -> lead,Working,
+lead_email,lead,preferred_email_address,residential_sale_lead -> lead,Working,
+lead_phone,lead,preferred_phone_number,residential_sale_lead -> lead,Check,May be NULL in source
+lead_source_id,lead,marketing_enquiry_source_id,residential_sale_lead -> lead,Working,
+lead_source_name,enquiry_source,label,residential_sale_lead -> lead -> enquiry_source,Working,
+residential_sale_id,residential_sale_lead,residential_sale_leads_id,Direct,Working,The property listing ID
+unit_id,residential_sale,property_id,residential_sale_lead -> residential_sale,Working,Links to proptech.unit table
+property_name,unit,name,residential_sale -> unit,MISSING,Need to add JOIN to unit table
+listing_reference,residential_sale,web_reference OR public_key,residential_sale_lead -> residential_sale,MISSING,Check which field has data
+listing_price,residential_sale,asking_price,residential_sale_lead -> residential_sale,Working,
+property_type,unit,property_type field,residential_sale -> unit,MISSING,Need to add JOIN to unit table
+bedrooms,unit,bedrooms,residential_sale -> unit,MISSING,Need to add JOIN to unit table
+bathrooms,unit,bathrooms,residential_sale -> unit,MISSING,Need to add JOIN to unit table
+listing_status,residential_sale,status,residential_sale_lead -> residential_sale,Working,
+listing_agent_id,residential_sale,managed_by_id,residential_sale_lead -> residential_sale,Working,
+listing_agent_name,shiro_user,CONCAT(first_name + last_name),residential_sale -> shiro_user,Working,
+listing_office_id,residential_sale,account_id,residential_sale_lead -> residential_sale,Working,
+listing_office_name,account,name,residential_sale -> account,Working,
+lead_account_id,lead,account_id,residential_sale_lead -> lead,Working,
+agency_name,account,name,lead -> account,Working,Same as listing_office_name
+inquiry_date,residential_sale,date_created,residential_sale_lead -> residential_sale,Working,
+first_contact_date,lead,date_created,residential_sale_lead -> lead,Working,
+last_contact_date,lead,last_contact OR last_updated,residential_sale_lead -> lead,Working,
+inquiry_position,residential_sale_lead,leads_idx,Direct,Working,
+converted_to_offer,offer_lead,EXISTS check,residential_sale_lead -> offer_lead,Working,
+offer_id,offer_lead,offer_id,residential_sale_lead -> offer_lead,Working,
+offer_date,offer,offer_date,offer_lead -> offer,Working,
+days_to_offer,Calculated,DATEDIFF(offer_date - inquiry_date),Calculated field,Working,
+offer_amount,offer,total_purchasing_price,offer_lead -> offer,Working,
+offer_completed,offer,registered_date IS NOT NULL,offer_lead -> offer,Working,
+offer_completion_date,offer,registered_date,offer_lead -> offer,Working,
+address_string,address,Concatenated address fields,unit -> address,MISSING,Address not properly linked
+suburb_id,address,id,unit -> address,MISSING,Address not properly linked
+suburb_name,address,suburb,unit -> address,MISSING,Address fields are NULL - not populated
+city_name,address,city,unit -> address,MISSING,Address fields are NULL - not populated
+province_name,address,province,unit -> address,MISSING,Address fields are NULL - not populated
+source_system,Static,proptech,N/A,Working,Hardcoded value
+loaded_at,Static,NOW(),N/A,Working,Timestamp of ETL load
+created_at,Static,NOW(),N/A,Working,Record creation timestamp
+updated_at,Static,NOW(),N/A,Working,Record update timestamp

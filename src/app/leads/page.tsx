@@ -149,19 +149,19 @@ export default function LeadsPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-8 space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Leads Performance</h1>
-            <p className="text-gray-600 mt-1">Property Engine vs Industry Comparison</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Leads Performance</h1>
+            <p className="text-sm md:text-base text-gray-600 mt-1">Property Engine vs Industry Comparison</p>
           </div>
           
           {/* Date Filter */}
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-gray-500" />
             <Select value={dateFilter} onValueChange={setDateFilter}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full md:w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -176,7 +176,7 @@ export default function LeadsPage() {
         </div>
 
         {/* Overview Cards - 3 cards in a row */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Total Leads Comparison */}
           <Card>
             <CardHeader>
@@ -185,7 +185,7 @@ export default function LeadsPage() {
                 Total Leads Comparison
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
+            <CardContent className="px-4 md:px-6 pb-6 overflow-x-auto">
               <div className="space-y-4">
                 <div className="flex items-baseline justify-between">
                   <span className="text-sm font-medium text-gray-600">Property Engine</span>
@@ -224,7 +224,7 @@ export default function LeadsPage() {
                 Response Rate Comparison
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
+            <CardContent className="px-4 md:px-6 pb-6 overflow-x-auto">
               <div className="space-y-4">
                 <div className="flex items-baseline justify-between">
                   <span className="text-sm font-medium text-gray-600">Property Engine</span>
@@ -263,7 +263,7 @@ export default function LeadsPage() {
                 Lead Sources
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
+            <CardContent className="px-4 md:px-6 pb-6 overflow-x-auto">
               <table className="w-full text-sm">
                 <tbody className="divide-y divide-gray-100">
                   {leadSources.map((source, idx) => (
@@ -280,7 +280,7 @@ export default function LeadsPage() {
         </div>
 
         {/* Agency Performance */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {/* Top 5 PE Agencies */}
           <Card>
             <CardHeader>
@@ -289,7 +289,7 @@ export default function LeadsPage() {
                 Top 5 Performing Agencies (Property Engine)
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
+            <CardContent className="px-4 md:px-6 pb-6 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
@@ -319,7 +319,7 @@ export default function LeadsPage() {
                 Bottom 5 Performing Agencies (Property Engine)
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
+            <CardContent className="px-4 md:px-6 pb-6 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
@@ -343,7 +343,7 @@ export default function LeadsPage() {
         </div>
 
         {/* Agent Performance */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {/* Top 5 Agents */}
           <Card>
             <CardHeader>
@@ -353,7 +353,7 @@ export default function LeadsPage() {
               </CardTitle>
               <p className="text-xs text-gray-500 mt-1">Agents with 10+ leads</p>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
+            <CardContent className="px-4 md:px-6 pb-6 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
@@ -384,7 +384,7 @@ export default function LeadsPage() {
               </CardTitle>
               <p className="text-xs text-gray-500 mt-1">Agents with 10+ leads</p>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
+            <CardContent className="px-4 md:px-6 pb-6 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">

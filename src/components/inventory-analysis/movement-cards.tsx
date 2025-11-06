@@ -13,68 +13,68 @@ interface MovementCardsProps {
 
 export function MovementCards({ metrics, values, averageStockTurn }: MovementCardsProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-4">
+    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
       {/* New Listings Card */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-base font-medium">New Listings</CardTitle>
+          <CardTitle className="text-sm md:text-base font-medium">New Listings</CardTitle>
           <TrendingUp className="h-5 w-5 text-green-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold">{metrics.newListings.toLocaleString()}</div>
-          <p className="text-sm text-muted-foreground">Properties listed</p>
-          <div className="text-xl font-semibold text-green-600 mt-2">
+          <div className="text-2xl md:text-3xl font-bold">{metrics.newListings.toLocaleString()}</div>
+          <p className="text-xs md:text-sm text-muted-foreground">Properties listed</p>
+          <div className="text-lg md:text-xl font-semibold text-green-600 mt-2">
             {formatCompactNumber(values.newStockValue)}
           </div>
-          <p className="text-sm text-muted-foreground">Total value</p>
+          <p className="text-xs md:text-sm text-muted-foreground">Total value</p>
         </CardContent>
       </Card>
 
       {/* Sold Listings Card */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-base font-medium">Sold Listings</CardTitle>
+          <CardTitle className="text-sm md:text-base font-medium">Sold Listings</CardTitle>
           <TrendingDown className="h-5 w-5 text-blue-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold">{metrics.soldListings.toLocaleString()}</div>
-          <p className="text-sm text-muted-foreground">Properties with offers</p>
-          <div className="text-xl font-semibold text-blue-600 mt-2">
+          <div className="text-2xl md:text-3xl font-bold">{metrics.soldListings.toLocaleString()}</div>
+          <p className="text-xs md:text-sm text-muted-foreground">Properties with offers</p>
+          <div className="text-lg md:text-xl font-semibold text-blue-600 mt-2">
             {formatCompactNumber(values.soldStockValue)}
           </div>
-          <p className="text-sm text-muted-foreground">Total value</p>
+          <p className="text-xs md:text-sm text-muted-foreground">Total value</p>
         </CardContent>
       </Card>
 
       {/* Current Stock Card */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-base font-medium">Current Stock</CardTitle>
+          <CardTitle className="text-sm md:text-base font-medium">Current Stock</CardTitle>
           <Package className="h-5 w-5 text-purple-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold">{metrics.currentStock.toLocaleString()}</div>
-          <p className="text-sm text-muted-foreground">Active inventory</p>
-          <div className="text-xl font-semibold text-purple-600 mt-2">
+          <div className="text-2xl md:text-3xl font-bold">{metrics.currentStock.toLocaleString()}</div>
+          <p className="text-xs md:text-sm text-muted-foreground">Active inventory</p>
+          <div className="text-lg md:text-xl font-semibold text-purple-600 mt-2">
             {formatCompactNumber(values.currentStockValue)}
           </div>
-          <p className="text-sm text-muted-foreground">Total value</p>
+          <p className="text-xs md:text-sm text-muted-foreground">Total value</p>
         </CardContent>
       </Card>
 
       {/* Average Stock Turn Card */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-base font-medium">Avg Stock Turn</CardTitle>
+          <CardTitle className="text-sm md:text-base font-medium">Avg Stock Turn</CardTitle>
           <Clock className="h-5 w-5 text-orange-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold">{averageStockTurn}</div>
-          <p className="text-sm text-muted-foreground">Days to sell</p>
-          <div className="text-xl font-semibold text-orange-600 mt-2">
+          <div className="text-2xl md:text-3xl font-bold">{averageStockTurn}</div>
+          <p className="text-xs md:text-sm text-muted-foreground">Days to sell</p>
+          <div className="text-lg md:text-xl font-semibold text-orange-600 mt-2">
             {averageStockTurn > 0 ? `${averageStockTurn} days` : 'N/A'}
           </div>
-          <p className="text-sm text-muted-foreground">Average time</p>
+          <p className="text-xs md:text-sm text-muted-foreground">Average time</p>
         </CardContent>
       </Card>
     </div>

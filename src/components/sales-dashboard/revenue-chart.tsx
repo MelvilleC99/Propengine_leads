@@ -24,37 +24,39 @@ export function RevenueChart({ data }: RevenueChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Revenue by Month</CardTitle>
+        <CardTitle className="text-base md:text-lg">Revenue by Month</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis 
-              dataKey="month" 
-              tick={{ fontSize: 12 }}
-              stroke="#6b7280"
-            />
-            <YAxis 
-              tickFormatter={formatCurrency}
-              tick={{ fontSize: 12 }}
-              stroke="#6b7280"
-            />
-            <Tooltip 
-              formatter={(value: number) => [formatCurrency(value), 'Revenue']}
-              contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #e5e7eb',
-                borderRadius: '6px',
-              }}
-            />
-            <Bar 
-              dataKey="revenue" 
-              fill="#3b82f6" 
-              radius={[4, 4, 0, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="w-full overflow-x-auto">
+          <ResponsiveContainer width="100%" height={350} minWidth={300}>
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis 
+                dataKey="month" 
+                tick={{ fontSize: 12 }}
+                stroke="#6b7280"
+              />
+              <YAxis 
+                tickFormatter={formatCurrency}
+                tick={{ fontSize: 12 }}
+                stroke="#6b7280"
+              />
+              <Tooltip 
+                formatter={(value: number) => [formatCurrency(value), 'Revenue']}
+                contentStyle={{
+                  backgroundColor: '#fff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '6px',
+                }}
+              />
+              <Bar 
+                dataKey="revenue" 
+                fill="#3b82f6" 
+                radius={[4, 4, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

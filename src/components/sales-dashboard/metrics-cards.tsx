@@ -62,7 +62,7 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {cards.slice(0, 3).map((card) => (
           <Card key={card.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -72,13 +72,13 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
               <card.icon className={`h-4 w-4 ${card.color}`} />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{card.value}</div>
+              <div className="text-2xl md:text-3xl font-bold">{card.value}</div>
             </CardContent>
           </Card>
         ))}
       </div>
       
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {cards.slice(3, 6).map((card) => (
           <Card key={card.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -88,7 +88,7 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
               <card.icon className={`h-4 w-4 ${card.color}`} />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{card.value}</div>
+              <div className="text-2xl md:text-3xl font-bold">{card.value}</div>
             </CardContent>
           </Card>
         ))}

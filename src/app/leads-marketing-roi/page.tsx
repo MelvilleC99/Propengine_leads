@@ -165,12 +165,12 @@ export default function LeadsMarketingROIDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* Header with View Toggle */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Lead Spend & ROI</h1>
-            <p className="text-gray-600">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Lead Spend & ROI</h1>
+            <p className="text-sm md:text-base text-gray-600">
               Marketing spend efficiency and lead performance analysis (Jan-Sep 2025)
             </p>
           </div>
@@ -179,7 +179,7 @@ export default function LeadsMarketingROIDashboard() {
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode("overview")}
-              className={`px-6 py-2 rounded-md text-sm font-semibold transition-all ${
+              className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-md text-sm font-semibold transition-all ${
                 viewMode === "overview"
                   ? "bg-gray-900 text-white shadow-lg"
                   : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
@@ -189,7 +189,7 @@ export default function LeadsMarketingROIDashboard() {
             </button>
             <button
               onClick={() => setViewMode("performance")}
-              className={`px-6 py-2 rounded-md text-sm font-semibold transition-all ${
+              className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-md text-sm font-semibold transition-all ${
                 viewMode === "performance"
                   ? "bg-gray-900 text-white shadow-lg"
                   : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"

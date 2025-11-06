@@ -103,9 +103,9 @@ export function RankingCards({ agencyMetrics }: RankingCardsProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{title}</CardTitle>
+          <CardTitle className="text-sm md:text-base">{title}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
@@ -124,7 +124,7 @@ export function RankingCards({ agencyMetrics }: RankingCardsProps) {
                   <td className="py-2 font-medium text-gray-700 text-xs">
                     {agency.account_name}
                   </td>
-                  <td className="py-2 text-right font-semibold text-gray-900 tabular-nums">
+                  <td className="py-2 text-right font-semibold text-gray-900 tabular-nums text-xs md:text-sm">
                     {isWasted ? formatCurrencyShort(getCost(agency)) : formatCurrency(getCost(agency))}
                   </td>
                   <td className="py-2 text-right text-gray-600 tabular-nums text-xs">
@@ -140,21 +140,21 @@ export function RankingCards({ agencyMetrics }: RankingCardsProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Toggle Button */}
       <div className="flex justify-center">
-        <div className="inline-flex rounded-lg border border-gray-300 p-1">
+        <div className="inline-flex rounded-lg border border-gray-300 p-1 w-full md:w-auto">
           <Button
             variant={showBest ? "default" : "ghost"}
             onClick={() => setShowBest(true)}
-            className="rounded-md px-6"
+            className="rounded-md px-4 md:px-6 flex-1 md:flex-none text-sm"
           >
             Best Performers
           </Button>
           <Button
             variant={!showBest ? "default" : "ghost"}
             onClick={() => setShowBest(false)}
-            className="rounded-md px-6"
+            className="rounded-md px-4 md:px-6 flex-1 md:flex-none text-sm"
           >
             Worst Performers
           </Button>
@@ -163,8 +163,8 @@ export function RankingCards({ agencyMetrics }: RankingCardsProps) {
 
       {/* Cost Per Lead */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Cost Per Lead</h3>
-        <div className="grid grid-cols-2 gap-6">
+        <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Cost Per Lead</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {renderRankingCard(
             "Property24",
             cplP24Ranked,
@@ -186,8 +186,8 @@ export function RankingCards({ agencyMetrics }: RankingCardsProps) {
 
       {/* Cost Per Sale */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Cost Per Sale</h3>
-        <div className="grid grid-cols-2 gap-6">
+        <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Cost Per Sale</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {renderRankingCard(
             "Property24",
             cpsP24Ranked,
@@ -209,8 +209,8 @@ export function RankingCards({ agencyMetrics }: RankingCardsProps) {
 
       {/* Effective Cost Per Lead */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Effective Cost Per Lead</h3>
-        <div className="grid grid-cols-2 gap-6">
+        <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Effective Cost Per Lead</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {renderRankingCard(
             "Property24",
             ecplP24Ranked,
@@ -232,8 +232,8 @@ export function RankingCards({ agencyMetrics }: RankingCardsProps) {
 
       {/* Wasted Cost - Show Total Wasted Amount */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Total Wasted Marketing Spend</h3>
-        <div className="grid grid-cols-2 gap-6">
+        <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Total Wasted Marketing Spend</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {renderRankingCard(
             "Property24",
             wcplP24Ranked,

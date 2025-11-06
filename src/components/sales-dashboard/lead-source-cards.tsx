@@ -40,13 +40,13 @@ export function LeadSourceCards({ breakdown }: LeadSourceCardsProps) {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
       {/* Card 1: Lead Source Breakdown */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Lead Source Breakdown</CardTitle>
         </CardHeader>
-        <div className="px-6 pb-6">
+        <div className="px-4 md:px-6 pb-6 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
@@ -73,7 +73,7 @@ export function LeadSourceCards({ breakdown }: LeadSourceCardsProps) {
         <CardHeader>
           <CardTitle className="text-base">Revenue by Lead Source</CardTitle>
         </CardHeader>
-        <div className="px-6 pb-6">
+        <div className="px-4 md:px-6 pb-6 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
@@ -100,7 +100,7 @@ export function LeadSourceCards({ breakdown }: LeadSourceCardsProps) {
         <CardHeader>
           <CardTitle className="text-base">Commission by Lead Source</CardTitle>
         </CardHeader>
-        <div className="px-6 pb-6">
+        <div className="px-4 md:px-6 pb-6 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">

@@ -153,11 +153,11 @@ export default function SalesDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sales & Leads Dashboard</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Sales & Leads Dashboard</h1>
+          <p className="text-sm md:text-base text-gray-600">
             Overview of sales performance and lead metrics
           </p>
         </div>
