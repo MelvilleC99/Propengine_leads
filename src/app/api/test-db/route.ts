@@ -8,13 +8,13 @@ export async function GET() {
     console.log('Connection established');
     
     // Test simple query
-    const [rows] = await conn.query('SELECT COUNT(*) as count FROM gold.lead_property_interest');
+    const [rows] = await conn.query<{ count: number }>('SELECT COUNT(*) as count FROM gold.lead_property_interest');
     console.log('Query result:', rows);
     
     return NextResponse.json({
       success: true,
       message: 'Database connection successful',
-      rowCount: rows[0].count,
+      rowCount: Array.isArray(rows) && rows.length > 0 ? rows[0].count : 0,
     });
   } catch (error) {
     console.error('Database connection error:', error);
